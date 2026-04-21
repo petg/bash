@@ -1,5 +1,7 @@
 ## custom init
-. ~/.sdkman/bin/sdkman-init.sh
+export UMAIL=petrgoodim@gmail.com
+
+#. ~/.sdkman/bin/sdkman-init.sh
 INIT_PATH="${INIT_PATH:-$PATH}"
 
 function main {
