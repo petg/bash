@@ -1,0 +1,38 @@
+## custom init
+. ~/.sdkman/bin/sdkman-init.sh
+INIT_PATH="${INIT_PATH:-$PATH}"
+
+function main {
+
+
+  alias vinit="vim ~/init && . ~/init"
+  alias dStart="sudo systemctl start docker"
+  alias dStop="sudo systemctl disable --now docker.service docker.socket"
+
+  alias java11="set_java /usr/lib/jvm/java-1.11.0-openjdk-amd64"
+  alias java17="set_java /usr/lib/jvm/java-1.17.0-openjdk-amd64"
+  alias java21="set_java /usr/lib/jvm/java-1.21.0-openjdk-amd64"
+  alias java26="set_java /usr/lib/jvm/java-1.26.0-openjdk-amd64"
+
+
+}
+
+
+
+
+### functions
+function set_java() {
+    export JAVA_HOME="$1"
+    export PATH="$JAVA_HOME/bin:$INIT_PATH"
+    . ~/.sdkman/bin/sdkman-init.sh
+    java -version
+}
+
+main "$@"
+
+
+
+
+
+
+echo inited
