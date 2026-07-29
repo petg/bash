@@ -1,7 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
 ## custom init
 
-PATH=$PATH:$HOME/bin
 INIT_PATH="${INIT_PATH:-$PATH}"
+PATH="$PATH:$HOME/bin"
 
 function main {
   export INIT_FILE="$HOME/bash/init"
@@ -14,9 +17,9 @@ function main {
 
   alias vinit="vim $INIT_FILE && . $INIT_FILE"
 
-  alias dStart="sudo systemctl start docker"
-  alias dStop="sudo systemctl disable --now docker.service docker.socket"
-  alias suUpd="sudo apt update -y  && sudo apt upgrade -y  && sudo apt autoremove -y"
+  alias dockerStart="sudo systemctl start docker"
+  alias dockerStop="sudo systemctl disable --now docker.service docker.socket"
+  alias systemUpdate="sudo apt update -y && sudo apt upgrade -y && sudo apt autoremove -y"
 
   alias java11="set_java /usr/lib/jvm/java-1.11.0-openjdk-amd64"
   alias java17="set_java /usr/lib/jvm/java-1.17.0-openjdk-amd64"
@@ -36,15 +39,9 @@ function main {
 function set_java() {
     export JAVA_HOME="$1"
     export PATH="$JAVA_HOME/bin:$INIT_PATH"
-    #. ~/.sdkman/bin/sdkman-init.sh
     java -version
 }
 
 main "$@"
-
-
-
-
-
 
 echo inited
