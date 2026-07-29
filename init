@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-set -euo pipefail
-
-## custom init
-
 INIT_PATH="${INIT_PATH:-$PATH}"
 PATH="$PATH:$HOME/bin"
 
@@ -11,8 +7,9 @@ function main {
   export ENV_FILE="$HOME/.env/all.env"
 
 
-  [[ -f "$ENV_FILE" ]] && source "$ENV_FILE" || echo "create $ENV_FILE"
-  [[ -f "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+  [[ -f "$ENV_FILE" ]] && source "$ENV_FILE" || echo "create $ENV_FILE" 
+
+  #create_java_aliases
 
 
   alias vinit="vim $INIT_FILE && . $INIT_FILE"
@@ -42,6 +39,49 @@ function set_java() {
     java -version
 }
 
+
+## todo: simplify
+function create_java_aliases() {
+    local jvm_dir="/usr/lib/jvm"
+    [[ -d "$jvm_dir" ]] || continue
+
+    declare -A alias_counts
+
+    for dir in "$jvm_dir"/java-*; do
+        [[ -d "$dir" ]] || continue
+
+        local basename
+        basename="$(basename "$dir")"
+
+        # Extract version number (e.g., 1.11.0 -> 11, 1.21.0 -> 21)
+        local version
+        version=$(echo "$basename" | grep -oP 'java-(\d+\.\d+\.\d+)' | head -1 | sed 's/java-//; s/^1\.//')
+
+        if [[ -z "$version" ]]; then
+            continue
+        fi
+
+        local alias_name="java${version}"
+
+        # Check for duplicates and add suffix
+        if [[ -n "${alias_counts[$alias_name]+x}" ]]; then
+            # Extract architecture from path
+            local arch_suffix
+            arch_suffix=$(echo "$basename" | grep -oP '(amd64|i386|arm64|aarch64)' || echo "unknown")
+            alias_name="${alias_name}_${arch_suffix}"
+        fi
+
+        alias_counts[$alias_name]=1
+
+        # Create the alias using eval to handle dynamic names
+        eval "alias ${alias_name}=\"set_java ${dir}\""
+    done
+}
+
+set -euo pipefail
 main "$@"
+set +euo pipefail
+
+
 
 echo inited
